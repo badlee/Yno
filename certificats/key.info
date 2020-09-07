@@ -1,0 +1,16 @@
+Nom d'alias : yno
+Date de création : 22 juil. 2020
+Type d'entrée : PrivateKeyEntry
+Longueur de chaîne du certificat : 1
+Certificat[1]:
+Propriétaire : CN=Badinga Ulrich, OU=Dev, O=Yno, L=Brazaville, ST=Brazaville, C=CG
+Emetteur : CN=Badinga Ulrich, OU=Dev, O=Yno, L=Brazaville, ST=Brazaville, C=CG
+Numéro de série : 610cea5e
+Valide du : Wed Jul 22 08:41:58 GMT 2020 au : Sun Dec 08 08:41:58 GMT 2047
+Empreintes du certificat :
+	 MD5 : 6A:0E:8C:FB:99:18:E3:46:40:6B:05:8C:F5:40:80:CD
+	 SHA1 : 81:2E:F3:ED:68:2C:C5:4D:22:C8:11:6C:F6:F0:7D:55:1A:B2:8B:77
+	 SHA256 : 76:CE:7D:C6:C6:F5:25:EE:EC:C6:6B:E3:93:69:7C:1B:0F:5B:94:A6:79:83:10:2C:80:14:04:F3:FF:49:0E:B4
+Nom de l'algorithme de signature : SHA256withRSA
+Algorithme de clé publique du sujet : Clé RSA 2048 bits
+Version : 3

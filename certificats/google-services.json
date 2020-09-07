@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "756766432682",
+    "firebase_url": "https://bicom-yno-app.firebaseio.com",
+    "project_id": "bicom-yno-app",
+    "storage_bucket": "bicom-yno-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756766432682:android:5247c69f8c29f556c81fd3",
+        "android_client_info": {
+          "package_name": "bicom.cg.yno"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "756766432682-p0te7g6mebkvskccm59uvjhmk446ogea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "bicom.cg.yno",
+            "certificate_hash": "812ef3ed682cc54d22c8116cf6f07d551ab28b77"
+          }
+        },
+        {
+          "client_id": "756766432682-9bvovro7nkaema8shuaqtdeo5hvbtj1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYFcRnWfqjbAWBzAgDY0BhVR2RUVmIscQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "756766432682-9bvovro7nkaema8shuaqtdeo5hvbtj1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

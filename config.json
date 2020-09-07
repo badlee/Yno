@@ -1,0 +1,26 @@
+{
+  "server": "http://yno.moyi-tech.com",
+  "baseUrl": "/ApiRest",
+  "token": "52433dd60f6557d878e3af1fdc1a4b",
+  "filter": {
+    "$or": [
+      {"delete": false},
+      {
+        "delete": {"$exists": false}
+      }
+    ]
+  },
+  "api": {
+    "configuration": {
+      "isSingleton" : true
+    },
+    "clients" : {
+      "filter" :{
+        "$and" :[
+          {"visibility" : {"$exists" : true}},
+          {"visibility" : {"$eq" : true}}
+        ]
+      }
+    }
+  }
+}

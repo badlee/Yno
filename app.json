@@ -2,11 +2,34 @@
   "name": "Yno",
   "displayName": "Yno",
   "expo": {
+    "scheme": "yno",
     "name": "Yno",
-    "slug": "Yno",
-    "version": "1.0.0",
+    "slug": "yno-demo",
+    "version": "1.0.7",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover"
+    },
+    "updates" : {
+      "enabled": true,
+      "fallbackToCacheTimeout": 35000
+    }, 
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "description": "",
+    "android": {
+      "package": "bicom.cg.yno",
+      "versionCode": 7,
+      "permissions": [
+        "INTERNET",
+        "SYSTEM_ALERT_WINDOW",
+        "ACCESS_COARSE_LOCATION", 
+        "ACCESS_FINE_LOCATION"
+      ],
+      "googleServicesFile" : "./certificats/google-services.json",
+      "useNextNotificationsApi": true
+    }
   }
 }

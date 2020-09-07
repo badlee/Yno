@@ -61,3 +61,20 @@ buck-out/
 # Expo
 .expo/*
 web-build/
+
+#My file
+*.old
+*.del
+*.old*
+*.del*
+*.zip
+.expo-*
+__tests__
+android/
+android/*
+ios/
+ios/*
+default/
+default/*
+*.lock
+*-lock*
