@@ -4,6 +4,7 @@ import {Alert, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {Agenda,LocaleConfig} from 'react-native-calendars';
 import {moment} from "../context/LocationContext";
 import SearchItemRDV from "../components/SearchItemRDV";
+import tinycolor from 'tinycolor2';
 
 LocaleConfig.locales['fr'] = {
   monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
@@ -62,14 +63,14 @@ export default class Schedule extends Component {
         markedDates={this.state.markedDates}
         // monthFormat={'yyyy'}
         theme={{
-          calendarBackground: "rgb(255, 146, 69)",
+          calendarBackground: tinycolor(global.config.color1).lighten(7).toRgbString(),
           // backgroundColor: "white",
           todayTextColor : "white",
           agendaDayTextColor : "white",
           dayTextColor : "white",
           agendaKnobColor: "white",
           selectedDayBackgroundColor : "white",
-          selectedDayTextColor : "rgba(241,117,34,1)",
+          selectedDayTextColor : global.config.color1,
           'stylesheet.day.multiDot': {
             selected: {
               backgroundColor : "white",
@@ -90,7 +91,7 @@ export default class Schedule extends Component {
             flexDirection : "column",
             width : 50,
             margin : 5,
-            backgroundColor : selected ?  "rgb(255, 146, 69)" :  "transparent",
+            backgroundColor : selected ?  tinycolor(global.config.color1).lighten(7).toRgbString() :  "transparent",
             borderRadius : selected ? 10 : 0,
             justifyContent : "flex-start",
             alignItems :"center",

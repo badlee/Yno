@@ -8,7 +8,7 @@ import API from "../../API";
 
 var isSelected = (selected, index,key)=>((index == 0 && !selected) || selected == index || selected == key);
 var isNotSelected = (selected, index,key)=>!isSelected(selected, index,key);
-var getStyle = (selected, index,key)=>(isSelected(selected, index,key) ? styles.selected : styles.icon);
+var getStyle = (selected, index,key)=>(isSelected(selected, index,key) ? {...styles.selected, color: global.config.color1} : styles.icon);
 var routes = {
   "search" : "Recherche",
   "today" : "RDV",
@@ -109,18 +109,11 @@ function BottomMenu(props) {
   );
 }
 
-var blue = "rgba(45,176,221,1)";
-var orange = "rgba(241,117,34,1)";
-
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "rgba(45,176,221,0.85)",
     backgroundColor: "rgba(255,255,255,0.0)",
     flexDirection: "row",
     alignItems: "center",
-    // borderWidth: 0,
-    // borderColor: "rgba(241,117,34,1)",
-    // borderTopWidth: 2,
     justifyContent: "space-around",
     height: 51,
     width: "100%"
@@ -135,7 +128,6 @@ const styles = StyleSheet.create({
     fontSize: 40
   },
   selected: {
-    color: orange,
     fontSize: 40
   },
   iconNonSelected: {

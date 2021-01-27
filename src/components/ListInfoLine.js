@@ -1,16 +1,22 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Linking, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 
 function ListInfoLine(props) {
   return (props.text ? 
     <View style={[styles.container, props.style]}>
-      <Icon name={props.icon || "location-pin"} style={styles.icon4}></Icon>
-      <View style={styles.rect2}>
+      <Icon name={props.icon || "location-pin"} style={[styles.icon4,{color: global.config.color2}]}></Icon>
+      <TouchableOpacity disabled={!/http(s)?:\/\//.test(props.text)} onPress={()=>{
+        if(/http(s)?:\/\//.test(props.text)){
+          Linking.openURL(props.text);
+        }
+      }} style={[styles.rect2, {
+        borderBottomColor: global.config.color2
+      }]}>
         <Text style={styles.loremIpsum}>
           {props.text}
         </Text>
-      </View>
+      </TouchableOpacity>
     </View> : <View/>
   );
 }

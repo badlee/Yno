@@ -1,9 +1,11 @@
 import React from 'react';
-import {AsyncStorage, StyleSheet } from 'react-native';
+import {AsyncStorage, StyleSheet, View } from 'react-native';
 import Intro from "../components/Intro";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { replace } from '../../Navigation';
 import {Context} from "../context/LocationContext";
+import Icon from 'react-native-vector-icons/Ionicons';
+import tinycolor from 'tinycolor2';
 
 const styles = StyleSheet.create({
   container: {
@@ -77,11 +79,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 20,
     alignSelf: "stretch"
-  }
+  },
+  buttonCircle: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(0, 0, 0, .2)',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default class App extends React.Component {
   static contextType = Context;
+  constructor(props) {
+    super(props);
+    this.item = global.config.slides[global.config.slides.length - 1];
+
+  }
   _renderItem ({ item }){
     return <Intro item={item} style={styles.intro}></Intro>;
   }
@@ -89,7 +104,53 @@ export default class App extends React.Component {
     await AsyncStorage.setItem('intro',"1");
     replace(this?.context?.userToken ? "Recherche" : "Login");
   }
+  _renderNextButton(){
+    return (
+      <View style={[styles.buttonCircle,{backgroundColor: this._getColor(this.item.meta.pageColor)}]}>
+        <Icon
+          name="md-arrow-round-forward"
+          color={this.item.meta.textColor}
+          size={24}
+        />
+      </View>
+    );
+  };
+  _renderDoneButton(){
+    return (
+      <View style={[styles.buttonCircle,{backgroundColor: this._getColor(this.item.meta.pageColor)}]}>
+        <Icon
+          name="md-checkmark"
+          color={this.item.meta.textColor}
+          size={24}
+        />
+      </View>
+    );
+  };
+  _getColor(dotColor, reverse){
+    dotColor = tinycolor(dotColor);
+    return (dotColor[reverse ? "isLight" : "isDark"]() ? dotColor.lighten(15) : dotColor.darken(15)).toHexString()
+  }
   render() {
-    return <AppIntroSlider nextLabel="Suivant" doneLabel="S'identifier" renderItem={this._renderItem} data={global.config.slides} onDone={this._onDone}/>;
+    var dotColor = this._getColor(this.item.meta.pageColor);
+    var dotActiveColor = this._getColor(this.item.meta.textColor);
+    var borderWidth = 0;
+    return <AppIntroSlider
+      // nextLabel="Suivant" 
+      // doneLabel="S'identifier" 
+      dotStyle ={{
+        backgroundColor : dotColor,
+        borderColor : dotActiveColor,
+        borderWidth 
+      }}
+      activeDotStyle = {{
+        backgroundColor : dotActiveColor,
+        borderColor : dotColor,
+        borderWidth
+      }}
+      renderDoneButton={this._renderDoneButton.bind(this)}
+        renderNextButton={this._renderNextButton.bind(this)}
+      renderItem={this._renderItem} 
+      data={global.config.slides} onDone={this._onDone}
+    />;
   }
 }

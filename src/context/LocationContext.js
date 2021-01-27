@@ -1,10 +1,14 @@
 import * as React from 'react';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
-import DropdownAlert from 'react-native-dropdownalert';
-import { Alert, Dimensions,StatusBar, AsyncStorage, Image } from 'react-native';
+import { Alert, Dimensions,StatusBar, AsyncStorage } from 'react-native';
+import Toast from 'react-native-toast-message';
 import moment from "moment";
 import API from '../../API';
+import * as Font from "expo-font";
+import Image from '../components/Image';
+
+
 const WINDOW = Dimensions.get('window');
 moment.locale('fr', {
   months : 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
@@ -72,12 +76,13 @@ moment.fn.greeting = function () {
 	if(!this || !this.isValid()) { return; } //if we can't find a valid or filled moment, we return.
 	
 	var split_afternoon = 12 //24hr time to split the afternoon
-	var split_evening = 17 //24hr time to split the evening
+	var split_evening = 18 //24hr time to split the evening
+	var split_day = 5 //24hr time to split the day
 	var currentHour = parseFloat(this.format("HH"));
 	
 	if(currentHour >= split_afternoon && currentHour <= split_evening) {
 		g = "Bonjour"; // apres midi
-	} else if(currentHour >= split_evening) {
+	} else if(currentHour >= split_evening || currentHour <= split_day ) {
 		g = "Bonsoir";
 	} else {
 		g = "Bonjour";
@@ -134,10 +139,10 @@ export default (props) => {
   const [spinner, showSpinner] = React.useState(false);
   const [myLocationStatus, setMyLocationStatus] = React.useState(null);
   const [myLocation, setMyLocation] = React.useState(null);
+  const [alert, setAlertRef] = React.useState(null);
   const [userToken, setUserToken] = React.useState(null);
   const [isGpsLocation, setIsGpsLocation] = React.useState(false);
   const [myLocationPlace, setMyLocationPlace] = React.useState(null);
-  const [alert, setDropDownAlertRef] = React.useState(null);
   const [history, setHistory] = React.useState([]);
   const [favoris, setFavoris] = React.useState([]);
   const [init, setInit] = React.useState(false);
@@ -172,28 +177,22 @@ export default (props) => {
     }
   } 
   const _init = async (type) => {
+    // await AsyncStorage.clear(); // reset
+    await Promise.all([
+      Font.loadAsync({
+        "roboto-regular": require("../assets/fonts/roboto-regular.ttf"),
+        "roboto-700": require("../assets/fonts/roboto-700.ttf")
+      })
+    ]);
     _getLocation();
-    // await AsyncStorage.clear();
     var res = await AsyncStorage.getItem("userToken");
     if(res){
       var user = JSON.parse(res);
-      var fav = await API.favoris.find({
-        filter:{
-          "user._id" : user._id
-        },
-        fields : ["client"], 
-        populate :  false
-      });
-      setFavoris(fav.map(el=>el.client._id));
       setUserToken(user);
-      console.log("userToken",userToken);
-      console.log("Favoris",favoris);
     }
-    // await AsyncStorage.removeItem("history");
     var history =  await AsyncStorage.getItem("history")
     history = history ? JSON.parse(history) : [];
     setHistory(history);
-    console.log("history",history);
     setInit(true);
     forceUpdate();
     setTimeout(()=>{
@@ -241,6 +240,7 @@ export default (props) => {
           })
         },
         favoris,
+        setFavoris,
         isFavoris(item){
           return favoris.findIndex(id=>item._id == id) != -1;
         },
@@ -287,7 +287,11 @@ export default (props) => {
               })
             }
           }catch(e){
-            alert.alertWithType("error","Favoris", "Erreur lors de l'enregistrement du favoris");
+            Toast.show({
+              type : "error",
+              text1: "Favoris",
+              text2 : "Erreur lors de l'enregistrement du favoris"
+            });
             console.error(e);
           } finally{
             favorisRequestCache[item._id] = false;
@@ -302,21 +306,29 @@ export default (props) => {
         spinner, showSpinner,
         isReady : alert != null,
         alert(title, message,options){
-          if(alert)
-            alert.alertWithType(options?.type ?? "info", title, message);
-          else
-            Alert.alert(title, message);
+          console.log(options, 'success|error|info'.split("|").indexOf(options?.type) != -1 ? options.type : "info");
+          Toast.show({
+            type: 'success|error|info'.split("|").indexOf(options?.type) != -1 ? options.type : "info",
+            position: options?.bottom ? 'bottom' : "top",
+            text1: title,
+            text2: message,
+            visibilityTime: options?.visibilityTime ?? 4000,
+            autoHide: options?.autoHide ?? true,
+            topOffset: options?.topOffset ?? 30,
+            bottomOffset: options?.bottomOffset ?? 40,
+            onShow: () => {
+              if(options?.onShow)
+                options?.onShow();
+            },
+            onHide: () => {
+              if(options?.onHide)
+                options?.onHide();
+            }
+          })
         }
       }}>
-      <DropdownAlert
-        updateStatusBar={false} 
-        panResponderEnabled={false} 
-        ref={ref => setDropDownAlertRef(ref)}
-        titleTextProps={{
-          marginTop : StatusBar.currentHeight +  10
-        }}
-      />
         {props.children}
+        <Toast ref={(ref) => {Toast.setRef(ref); setAlertRef(ref);}} />
       </Context.Provider> : <Image
               source={global.colors.SPLASH}
               resizeMode="cover"

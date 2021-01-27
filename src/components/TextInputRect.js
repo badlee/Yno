@@ -1,14 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, TextInput as Input } from "react-native";
 import { TextInput, DefaultTheme } from 'react-native-paper';
-var PaperTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: "rgba(241,117,34,1)",
-    // accent: "rgba(45,176,221,1)",
-  },
-};
 function TextInputRect(props) {
   var error = props.error || (props.name && props.errors && Array.isArray(props.errors) && (props.errors.find(el => el["fieldName"] == props.name) || {})["messages"]);
   return (
@@ -19,7 +11,14 @@ function TextInputRect(props) {
       <TextInput
         label={props.title || "Nom"}
         // dense={true}
-        theme={PaperTheme}
+        theme={{
+          ...DefaultTheme,
+          colors: {
+            ...DefaultTheme.colors,
+            primary: global.config.color1,
+            // accent: "rgba(45,176,221,1)",
+          },
+        }}
         editable={props.readOnly == true ? false :  props.editable ?? true}
         disabled={!(props.readOnly == true ? false :  props.editable ?? true)}
         placeholder={props.placeholder || props.title || "Entrez votre nom"}
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
     // color: "#121212",
     // alignSelf: "stretch",
     // borderWidth: 2,
-    // borderColor: "rgba(241,117,34,1)",
+    // borderColor: global.config.color1,
     // height: 40,
     // borderRadius: 20,
     // paddingHorizontal: 20,

@@ -7,6 +7,7 @@ import {navigate } from '../../Navigation';
 import Image from "../components/Image";
 import Modal from "../components/Modal";
 import MaterialCommunityIconsIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import tinycolor from 'tinycolor2';
 
 
 function SearchItemRDV(props) {
@@ -61,7 +62,9 @@ function SearchItemRDV(props) {
           <Text style={{color: "#FFF", textAlign:"center", fontSize: 10,}}>{(props.item.reject === false ? (props.item.done == false ? "En attente" :"Accepté") : "Rejeté").toLowerCase()}</Text>
         </View>
       </TouchableOpacity>
-      <View style={styles.rect8}></View>
+      <View style={[styles.rect8,{
+            backgroundColor: tinycolor(global.config.color2).toRgbString()
+      }]}></View>
       <Modal
         animationType='slide'
         isNative={true}
@@ -83,7 +86,7 @@ function SearchItemRDV(props) {
               // position:"absolute",
               // bottom: 0,
               // left:0,
-              // backgroundColor: "rgba(241,117,34,1)",
+              // backgroundColor: global.config.color1,
               backgroundColor : props.item.reject === false ? (props.item.done == false ? "orange" : "green") : "red",
               flexDirection:"row",
               justifyContent: "space-around",
@@ -278,7 +281,7 @@ const styles = StyleSheet.create({
   rect8: {
     backgroundColor: "transparent",
     alignSelf: "stretch",
-    height: 1,
+    height: 2,
     paddingTop: 0,
     marginTop: 5,
     marginBottom: 0

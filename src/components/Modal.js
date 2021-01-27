@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { StyleSheet,ScrollView, View, Dimensions, Text } from "react-native";
 import Modal from "react-native-modal-wrapper";
 
-var blue = "rgba(45,176,221,1)";
-var orange = "rgba(241,117,34,1)";
 
 function Cmp(props) {
   return (
@@ -17,7 +15,7 @@ function Cmp(props) {
         style={[styles.container,props.style]}
       >
         { !!props.title && <View style={{
-          backgroundColor: props.backgroundColorTitle ?? orange,
+          backgroundColor: props.backgroundColorTitle ?? global.config.color1,
           alignSelf:"stretch",
           justifyContent: "center",
           borderTopLeftRadius : 20,
@@ -41,7 +39,7 @@ function Cmp(props) {
           flex : 1,
           // padding: 10,
           // paddingBottom : 20,
-          borderColor : props.backgroundColorTitle ?? orange,
+          borderColor : props.backgroundColorTitle ?? global.config.color1,
           borderWidth : 2,
           borderBottomWidth : 0,
         }}><View style={{

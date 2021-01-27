@@ -1,3 +1,4 @@
+const BG = require("../assets/images/register.jpg");
 import React, { useContext } from "react";
 import {
   StyleSheet,
@@ -8,31 +9,60 @@ import {
   AsyncStorage,
   TouchableOpacity,
   StatusBar,
-  BackHandler
+  BackHandler,
+  Dimensions
 } from "react-native";
 import TextInputRect from "../components/TextInputRect";
 import ValidationComponent from 'react-native-form-validator';
 import API from "../../API";
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Context} from "../context/LocationContext";
+import { Constants } from "react-native-unimodules";
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  scrollArea: {
-    flex: 1,
     padding: "10%",
+    flex: 1,
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    alignContent : "flex-start",
+    flexDirection: "column"
+  },
+  bgPage:{
+    position: "absolute",
+    top: 0,
+    left : 0,
+    bottom : 0 ,
+    height : 0,
+    width: Dimensions.get("window").width,
+    height : Dimensions.get("window").height,
+    backgroundColor: "white"
+  },
+  spacer: {
+    flex: 1,
+    margin: 0,
+    alignSelf: "stretch"
   },
   scrollArea_contentContainerStyle: {
-    // height: "50%",
+    padding: 3,
+    paddingHorizontal : 20,
+    backgroundColor : "rgba(255,255,255,0.6)",
+    borderRadius: 15,
+    // flex: 1,
+    height :620,
+    marginTop :  0,
+    width : "100%",
+    flexDirection: "column",
+    alignContent: "center",
     alignItems: "center",
-    justifyContent: "space-between"
+
+    // justifyContent: "flex-start",
+    // alignItems: "center"
   },
   image: {
     width: 128,
     height: 128,
-    margin: 5
+    margin: 10
   },
   textInputRect: {
     left: 0,
@@ -57,16 +87,6 @@ const styles = StyleSheet.create({
     height: 20,
     alignSelf: "stretch"
   },
-  telephoneInput: {
-    fontFamily: "roboto-regular",
-    color: "#121212",
-    alignSelf: "stretch",
-    borderWidth: 2,
-    borderColor: "rgba(241,117,34,1)",
-    height: 40,
-    borderRadius: 20,
-    paddingLeft: 5
-  },
   emailRect: {
     left: 0,
     justifyContent: "center",
@@ -80,16 +100,6 @@ const styles = StyleSheet.create({
     height: 20,
     alignSelf: "stretch"
   },
-  emailText: {
-    fontFamily: "roboto-regular",
-    color: "#121212",
-    alignSelf: "stretch",
-    borderWidth: 2,
-    borderColor: "rgba(241,117,34,1)",
-    height: 40,
-    borderRadius: 20,
-    paddingLeft: 5
-  },
   pwdRect: {
     left: 0,
     justifyContent: "center",
@@ -102,16 +112,6 @@ const styles = StyleSheet.create({
     color: "#121212",
     height: 20,
     alignSelf: "stretch"
-  },
-  pwdText: {
-    fontFamily: "roboto-regular",
-    color: "#121212",
-    alignSelf: "stretch",
-    borderWidth: 2,
-    borderColor: "rgba(241,117,34,1)",
-    height: 40,
-    padding: 5,
-    borderRadius: 20
   },
   loginBtn: {
     backgroundColor: "rgba(45,176,221,1)",
@@ -188,7 +188,7 @@ export default class MyForm extends ValidationComponent {
     if(valid){
       try{
       showSpinner(true);
-      var res = await API.user.findOne({
+      var res = await API.users.findOne({
         filter :{
           email : this.state.email.trim().toLowerCase()
         },
@@ -240,6 +240,13 @@ export default class MyForm extends ValidationComponent {
   render(props) {
     return (
       <View style={styles.container}>
+        <Image style={[styles.bgPage]} 
+          source={
+            // {uri: "https://picsum.photos/200/300?"+Date.now()+Math.random()}
+            BG
+          }
+          resizeMode="cover"
+        />
           <Spinner
             visible={this.state.spinner}
             textContent={'Enregistrement...'}
@@ -247,9 +254,11 @@ export default class MyForm extends ValidationComponent {
               color: "white"
             }}
           />
+        <View style={styles.spacer}></View>
+
           <ScrollView
             horizontal={false}
-            contentContainerStyle={[styles.scrollArea_contentContainerStyle,styles.scrollArea]}
+            contentContainerStyle={[styles.scrollArea_contentContainerStyle]}
           >
             <Image
               source={require("../assets/images/icon2.png")}
@@ -306,6 +315,16 @@ export default class MyForm extends ValidationComponent {
               <Text style={styles.identification}>S'Identifier</Text>
             </TouchableOpacity>
           </ScrollView>
+        <View style={styles.spacer}></View>
+
+          <View style={{
+            backgroundColor : "rgba(255,255,255,0.4)",
+            position:"absolute",
+            top: 0,
+            left:0,
+            height:Constants.statusBarHeight,
+            width : Dimensions.get("window").width
+          }}></View>
       </View>
     );
   }

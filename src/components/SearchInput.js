@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, ScrollView, Image } from "react-native";
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/EvilIcons";
 import {Context} from "../context/LocationContext";
 import API from "../../API";
 import {navigate } from '../../Navigation';
 import SvgUri from 'expo-svg-uri';
-import { Circle } from 'react-native-animated-spinkit'
-async function _search(alert,showSpinner,query,categorie, ignoreQuery=false){
+import { Circle } from 'react-native-animated-spinkit';
+import Image from './Image';
+
+async function _search(setQuery,alert,showSpinner,query,categorie, ignoreQuery=false){
     if((!query || query.length < 3) && ignoreQuery == false) return;
     try {
       showSpinner(true);
@@ -28,13 +30,15 @@ async function _search(alert,showSpinner,query,categorie, ignoreQuery=false){
         limit : 20
       });
       if(ret && ret.length > (ignoreQuery ? 0 : 1)){
+        setQuery("");
         navigate("Liste",{results : ret,query : ignoreQuery && query.toLowerCase().trim() == "" ? categorie.nom : query.toLowerCase().trim(), filter, isTitle : ignoreQuery && query.toLowerCase().trim() == "" });
       }else if(ret && ret.length == 1){
         ret[0].$icon = false; 
+        setQuery("");
         navigate("Fiche",ret[0]);
       }else{
         alert('Informations', "Pas de resultats",{
-          type : 'warn'
+          type : 'info'
         });
         // Alert.alert(undefined,"Pas de resultats");
       }
@@ -57,7 +61,7 @@ function SearchInput(props) {
     <View style={[styles.searchBox, props.style]}>
       <View style={[styles.container, props.styleSearchBox]}>
         <TextInput onFocus={props.onFocus} onBlur={props.onBlur} placeholder="Que cherchez vous ?" placeholderTextColor="rgba(0,0,0,0.5)" style={styles.textInput} value={query} onChangeText={(value)=>setQuery(value)}></TextInput>
-        <TouchableOpacity disabled={!query || query.length < 3} style={styles.button} onPress={()=>_search(alert,showSpinner,query)}>
+        <TouchableOpacity disabled={!query || query.length < 3} style={[styles.button,{backgroundColor: global.config.color1,}]} onPress={()=>_search(setQuery,alert,showSpinner,query)}>
           <Icon name="search" style={styles.icon}></Icon>
         </TouchableOpacity>
       </View>
@@ -112,7 +116,7 @@ function SearchInput(props) {
               alignContent: "center",
               alignItems:"center",
             }}
-            onPress={()=>_search(alert,showSpinner,query, categorie, true)}
+            onPress={()=>_search(setQuery,alert,showSpinner,"", categorie, true)}
             >
               {/.svg$/.test(categorie.icon.path) ?
                 <SvgUri
@@ -175,8 +179,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 40,
-    height: 40,
-    backgroundColor: "rgba(241,117,34,1)",
+    height: 40,    
     borderRadius: 25,
     alignItems: "center",
     justifyContent: "center"

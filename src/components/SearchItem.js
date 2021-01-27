@@ -7,7 +7,7 @@ import SvgUri from 'expo-svg-uri';
 import {Context,displayMeter,getDistanceFromLatLonInKm} from "../context/LocationContext";
 import {navigate } from '../../Navigation';
 import Image from "../components/Image";
-
+import tinycolor from 'tinycolor2';
 
 function SearchItem(props) {
   var item = props.item;
@@ -69,7 +69,9 @@ function SearchItem(props) {
         </View>
         <Icon name="chevron-thin-right" style={styles.icon}></Icon>
       </TouchableOpacity>
-      <View style={styles.rect8}></View>
+      <View style={[styles.rect8,{
+            backgroundColor: tinycolor(global.config.color2).toRgbString()
+      }]}></View>
     </View>
   );
 }
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
   rect8: {
     backgroundColor: "#E6E6E6",
     alignSelf: "stretch",
-    height: 1,
+    height: 2,
     paddingTop: 0,
     marginTop: 5,
     marginBottom: 0

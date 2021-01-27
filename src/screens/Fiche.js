@@ -3,15 +3,15 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Image,
   TouchableOpacity,
   Text,
   TextInput,
   Dimensions,
   Share,
   Picker,
-  AsyncStorage,
-  Alert
+  Button,
+  Platform,
+  ViewBase
 } from "react-native";
 import Modal from "../components/Modal";
 import TopBar from "../components/TopBar";
@@ -29,10 +29,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DatepickerRange from 'react-native-range-datepicker';
 import { Circle } from 'react-native-animated-spinkit';
 import { Rating } from 'react-native-ratings';
+import tinycolor from 'tinycolor2';
+import Image,{prefetch} from '../components/Image';
+import { SliderBox } from "react-native-image-slider-box";
 const RATING_IMAGE = require('../assets/images/start.png');
 
-var blue = "rgba(45,176,221,1)";
-var orange = "rgba(241,117,34,1)";
 function Fiche(props) {
   var item = props.route.params;
   var categorie_reservation = item.categorieRdv && item.categorieRdv.length ? item.categorieRdv : global.categorie_reservation;
@@ -40,11 +41,14 @@ function Fiche(props) {
   const [motif, setMotif] = React.useState("");
   const [pub, setPub] = React.useState("");
   const [rating, setRating] = React.useState(0);
+  const [pickerOpacity, setPickerOpacity] = React.useState(0);
+  const [opacityOfOtherItems, setOpacityOfOtherItems] = React.useState(0);
   const [avis, setAvis] = React.useState(null);
   const [raison, setRaison] = React.useState(0);
   const [date, setDate] = React.useState(moment().add(2,"days").toDate());
   var [modalRatingVisible, showRatingModal] = React.useState(false);
   var [modalVisible, showModal] = React.useState(false);
+  var [buttonVisible, showButton] = React.useState(false);
   var [dateVisible, showDate] = React.useState(categorie_reservation[0].date);
   var [pickerVisible, showPicker] = React.useState(false);
   const { myLocation, isGpsLocation ,showSpinner, alert, addHistory, favoris, setAsFavori, userToken} = React.useContext(Context);
@@ -57,10 +61,17 @@ function Fiche(props) {
     var t = favoris.findIndex(id=>item._id == id) ;
     return t != -1;
   })();
-
   React.useEffect(()=>{
+    if(item?.image?.path)
+      prefetch(API.getAssetUri(item.image.path));
+    if(item?.gallery && item?.gallery?.length)
+    item.gallery.forEach(image=>prefetch(API.getAssetUri(image.path)))
     var _pub = Math.floor((global?.publicitesText ?? 0).length*Math.random()+1) - 1;
     setPub((global?.publicitesText ?? [])[_pub] ?? "");
+    var v = Platform.OS == "ios";
+    showButton(v);
+    setPickerOpacity(v ? 0 : 1);
+    setOpacityOfOtherItems(v ? 1 : 0);
     addHistory(item);
     API.avis.findOne({
       populate : false,
@@ -94,12 +105,37 @@ function Fiche(props) {
               <View
                 style={styles.image}
               >
-
+          { (item?.gallery && item?.gallery?.length) ? <SliderBox
+              images={[
+                API.getAssetUri(item.image.path),
+                ...item.gallery.map(image=>API.getAssetUri(image.path) )
+              ]}
+              sliderBoxHeight={styles.image.height}
+              parentWidth={styles.image.width}
+              dotColor = {global.config.color1}
+              dotStyle={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                borderColor : "#FFEEF8",
+                borderWidth : 1,
+                padding: 0,
+                margin: 0,
+                backgroundColor : global.config.color1
+              }}
+              inactiveDotColor={global.config.color2}
+              imageLoadingColor={global.config.color1}
+              paginationBoxVerticalPadding={0}
+              resizeMethod={'resize'}
+              resizeMode={'cover'}
+              autoplay
+              circleLoop
+            /> :
           <Image
             source={!!(item?.image?.path) ? {uri:API.getAssetUri(item.image.path)} : require("../assets/images/defaultEntrepriseImage.png")}
             resizeMode="cover"
             style={styles.image}
-          ></Image>
+          ></Image>}
           <TouchableOpacity style={styles.favoris} onPress={()=>setAsFavori(item)}>  
             <MaterialCommunityIconsIcon
                 name={isFavoris ? "heart" : "heart-outline"}
@@ -184,7 +220,7 @@ function Fiche(props) {
                   marginVertical: 0,
                   height : 69,
                   flexDirection: "row",
-                  backgroundColor : "rgba(241,117,34,0.2)",
+                  backgroundColor : tinycolor(global.config.color2).setAlpha(0.20).toRgbString(),
                   borderRadius : 10,
                 }}  onPress={()=>{
                   Linking.openURL(pub.lien);
@@ -216,7 +252,7 @@ function Fiche(props) {
                   bottom : -5,
                   right: 5,
                   flexDirection: "row",
-                  backgroundColor : blue,
+                  backgroundColor : global.config.color2,
                   padding : 5,
                   alignItems:"center",
                   borderRadius : 5
@@ -280,22 +316,26 @@ function Fiche(props) {
               [...( item.telephone ? [{
                 text: "Demande de RDV",
                 color : "white",
-                textBackground : orange,
+                textBackground : global.config.color1,
                 textColor: "#FFFFFF",
                 icon: <MaterialCommunityIconsIcon
                   name="calendar-plus"
-                  style={styles.icon3}
+                  style={[styles.icon3,{
+                    color: global.config.color1
+                  }]}
                 ></MaterialCommunityIconsIcon>,
                 name: "bt_rdv",
                 position: 1
               }] : []),...( item.telephone ? [{
                 text: "Appeler",
                 color : "white",
-                textBackground : orange,
+                textBackground : global.config.color1,
                 textColor: "#FFFFFF",
                 icon: <MaterialCommunityIconsIcon
                   name="phone"
-                  style={styles.icon3}
+                  style={[styles.icon3,{
+                    color: global.config.color1
+                  }]}
                 ></MaterialCommunityIconsIcon>,
                 name: "bt_call",
                 position: 2
@@ -303,11 +343,13 @@ function Fiche(props) {
               ...( item?.position?.lat && item?.position?.lng ? [{
                 text: "Y Aller",
                 color : "white",
-                textBackground : orange,
+                textBackground : global.config.color1,
                 textColor: "#FFFFFF",
                 icon: <MaterialCommunityIconsIcon
                       name="directions-fork"
-                      style={styles.icon3}
+                      style={[styles.icon3,{
+                        color: global.config.color1
+                      }]}
                     ></MaterialCommunityIconsIcon>,
                 name: "bt_map",
                 position: 3,
@@ -315,23 +357,25 @@ function Fiche(props) {
               {
                 text: "Partager",
                 color : "white",
-                textBackground : orange,
+                textBackground : global.config.color1,
                 textColor: "#FFFFFF",
                 icon: <MaterialCommunityIconsIcon
                       name="share-variant"
-                      style={styles.icon3}
+                      style={[styles.icon3,{
+                        color: global.config.color1
+                      }]}
                     ></MaterialCommunityIconsIcon>,
                 name: "bt_share",
                 position: 4
               },{
                 text: isFavoris ?"Retirer des favoris" :"Ajouter aux favoris",
                 color : "white",
-                textBackground : orange,
+                textBackground : global.config.color1,
                 textColor: "#FFFFFF",
                 icon: <MaterialCommunityIconsIcon
                   name={isFavoris ? "heart" : "heart-outline"}
                   style={[styles.icon3,{
-                    color: isFavoris ? "red": orange,
+                    color: isFavoris ? "red": global.config.color1,
                     // fontSize: 30
                   }]}
                 ></MaterialCommunityIconsIcon>,
@@ -339,7 +383,7 @@ function Fiche(props) {
                 position: 5
               }]
             }
-            color={orange}
+            color={global.config.color1}
             position="right"
             onPressItem={name => {
               switch (name) {
@@ -370,11 +414,14 @@ function Fiche(props) {
             }}
           />
       
-      {(!!note || note === 0) && <View style={styles.avis} onPress={()=>setAsFavori(item)}>  
+      {(!!note || note === 0) && <View style={[styles.avis, {
+        borderColor : global.config.color1,
+        borderWidth : 2
+      }]} onPress={()=>setAsFavori(item)}>  
           <Rating
             type='custom'
             ratingImage={RATING_IMAGE}
-            ratingColor={orange}
+            ratingColor={global.config.color1}
             ratingBackgroundColor='transparent'
             ratingCount={5}
             imageSize={25}
@@ -410,7 +457,7 @@ function Fiche(props) {
         <Rating
             type='custom'
             ratingImage={RATING_IMAGE}
-            ratingColor={orange}
+            ratingColor={global.config.color1}
             ratingBackgroundColor='transparent'
             ratingCount={5}
             imageSize={25}
@@ -425,7 +472,7 @@ function Fiche(props) {
             fontWeight: "bold",
           }}>Votre avis</Text>
           <TextInput value={ avis?.message || motif} onChangeText={setMotif} multiline={true} numberOfLines={10} style={{
-            borderColor: orange,
+            borderColor: global.config.color1,
             borderWidth : 1,
             height: 100,
             textAlignVertical:"top",
@@ -437,7 +484,7 @@ function Fiche(props) {
           }}></TextInput>
 
           <TouchableOpacity style={{
-            backgroundColor: orange,
+            backgroundColor: global.config.color1,
             borderRadius: 20,
             height: 40,
             margin: 10,
@@ -522,17 +569,51 @@ function Fiche(props) {
               textAlign: "left",
               textAlignVertical: "center",
             }}>Raison</Text>
-            <Picker
-              selectedValue={raison}
-              
-              itemStyle={{
-                fontSize: 10
+            {buttonVisible ? <TouchableOpacity
+              onPress={() => {
+                setPickerOpacity(1);
+                setOpacityOfOtherItems(0); // THIS WILL HIDE YOUR BUTTON!
               }}
               style={{
-                height: 25,
-                flex: 1,
-                borderColor: orange,
-                borderWidth : 1,
+                flexDirection: "row", 
+                flex:1, 
+                justifyContent: "flex-start", 
+                alignItems:"center",
+                display: opacityOfOtherItems == 0 ? 'none' : 'flex'
+              }}>
+              <Text style={{ flex:1 }}>{categorie_reservation[raison].nom}</Text>
+              <MaterialCommunityIconsIcon
+                name='chevron-down'
+                color='#444'
+                size={24}
+                style={{marginRight:5}}
+              />
+            </TouchableOpacity> :
+            <View style={{
+              height: 25,
+              borderColor: global.config.color1,
+              borderRadius : 7,
+              borderWidth : 1,
+              alignSelf: 'center', 
+              alignContent: "flex-start",
+              justifyContent: "flex-start",
+              // alignItems: "flex-end",
+              // width: "100%",
+              flex: 1,
+            }}><Picker
+            mode="dropdown"
+            selectedValue={raison}
+            itemStyle={{
+              fontSize: 10
+            }}
+            style={{
+              margin : 0,
+              padding : 0,
+              // position: "relative",
+              top : 0,
+              height : 23,
+              // width : "100%",
+              // backgroundColor:"red"
               }}
               onValueChange={(itemValue, itemIndex) =>{
                 setRaison(itemIndex);
@@ -542,14 +623,14 @@ function Fiche(props) {
               {
                 categorie_reservation.map((el,index)=><Picker.Item key={el._id} label={el.nom} value={index} />)
               }
-            </Picker>
+            </Picker></View>}
           </View>
           <Text style={{
             fontSize: 13,
             fontWeight: "bold",
           }}>Message</Text>
           <TextInput value={motif} onChangeText={setMotif} multiline={true} numberOfLines={10} style={{
-            borderColor: orange,
+            borderColor: global.config.color1,
             borderWidth : 1,
             height: 100,
             textAlignVertical:"top",
@@ -568,7 +649,7 @@ function Fiche(props) {
               alignContent:"center",
               // alignItems:"center",
               flexDirection: "row-reverse",
-              borderColor: orange,
+              borderColor: global.config.color1,
               borderWidth : 1,
               textAlignVertical:"top",
               margin: 5,
@@ -606,7 +687,7 @@ function Fiche(props) {
             </View>
           ]}
           <TouchableOpacity style={{
-            backgroundColor: !motif.trim() || (dateVisible && !date) ? "rgba(0,0,0,0.1)" : orange,
+            backgroundColor: !motif.trim() || (dateVisible && !date) ? "rgba(0,0,0,0.1)" : global.config.color1,
             borderRadius: 20,
             height: 40,
             margin: 10,
@@ -652,6 +733,61 @@ function Fiche(props) {
           }}>
             <Text style={{color:!motif.trim() || !date ? "rgba(0,0,0,0.1)" : "#FFFFFF", fontWeight: "bold"}}>Demander un RDV</Text>
           </TouchableOpacity>
+          {Platform.OS == "ios" && <View style={{
+                position:"absolute",
+                flex: 1,
+                display: pickerOpacity == 0 ? 'none' : 'flex',
+                alignSelf: 'center', 
+                alignContent:"center",
+                justifyContent: "center",
+                width: Dimensions.get("window").width * 0.9,
+                backgroundColor:"transparent",
+                borderRadius : 20,
+                padding : '5%',
+                height : "100%",
+                width : "100%",
+              }}>
+            <View style={{
+                flex: 1,
+                flexDirection : "column",
+                display: 'flex',
+                borderColor: global.config.color1,
+                borderWidth : 2,
+                backgroundColor:"#efefef",
+                borderRadius : 20,
+                alignItems : "center",
+                alignContent:"center",
+                justifyContent: "center",
+                overflow:"hidden"
+              }}>
+              <Picker
+                selectedValue={raison}
+                itemStyle={{
+                  fontSize: 10
+                }}
+                style={{
+                  backgroundColor:"transparent",
+                  borderRadius : 20,
+                  height : "100%",
+                  width : "100%",
+                  flex: 1,
+                  alignSelf: "center"
+                }}
+                onValueChange={(itemValue, itemIndex) =>{
+                  if(buttonVisible){
+                    setPickerOpacity(0);
+                    setOpacityOfOtherItems(1);
+                  }
+                  setRaison(itemIndex);
+                  showDate(categorie_reservation[itemIndex].date);
+                }}
+              >
+                {
+                  categorie_reservation.map((el,index)=><Picker.Item key={el._id} label={el.nom} value={index} />)
+                }
+              </Picker>
+            </View>
+          </View>}
       </Modal>
     </View>
   );
@@ -749,15 +885,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around"
   },
-  call1: {
-    width: 100,
-    height: 24,
-    backgroundColor: blue,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 10,
-    margin: 2
-  },
   icon2: {
     color: "rgba(255,255,255,1)",
     fontSize: 20,
@@ -767,17 +894,7 @@ const styles = StyleSheet.create({
     fontFamily: "roboto-regular",
     color: "rgba(255,255,255,1)"
   },
-  goTo1: {
-    width: 100,
-    height: 24,
-    backgroundColor: blue,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 10,
-    margin: 2
-  },
   icon3: {
-    color: orange,
     fontSize: 20,
     padding: 5
   },
@@ -817,8 +934,7 @@ const styles = StyleSheet.create({
     marginHorizontal: "10%",
     margin: 0,
     height: 30,
-    // backgroundColor: "rgba(45, 176, 221, 0.8);",
-    backgroundColor: "rgba(255, 255, 255, 0.6);",
+    backgroundColor: "rgba(255,255,255, 0.75);",
     padding: 5,
     borderRadius: 10,
     borderTopLeftRadius: 0,

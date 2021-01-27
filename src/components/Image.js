@@ -1,31 +1,29 @@
 import React from "react";
-import { StyleSheet, View,Image, Text } from "react-native";
+import { StyleSheet, View, Text, Image as FastImage } from "react-native";
 import SvgUri from 'expo-svg-uri';
+// import FastImage from 'react-native-fast-image';
 
 function Cmp(props) {
   var [loading, setLoading] = React.useState(true);
-  return (
-    <View style={[styles.container, props.style]}>
-      { 
-        (props.source.uri && /.svg$/.test(props.source.uri) ? <SvgUri
+  return props.source.uri && /.svg$/.test(props.source.uri) ? <SvgUri
           {...props}
           width={props.style.width}
           height={props.style.height}
-        /> : <Image
+        /> : <FastImage
+          resizeMode = "contain"
           {...props}
+          width={props.style.width}
+          height={props.style.height}
           onLoadEnd={()=>{
             setLoading(false);
           }}
-        />)
-      }
-        {/* <Text>{loading}</Text> */}
-    </View>
-  );
+        />;
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row"
+    padding: 0,
+    margin: 0,
   },
   ellipse: {
     width: 15,
@@ -34,5 +32,11 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   }
 });
+function prefetch(url){
+  FastImage.prefetch(url);
+}
 
 export default Cmp;
+export{
+  prefetch
+};

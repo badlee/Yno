@@ -3,6 +3,8 @@ import { View, Text ,Button,Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
+import Image from './src/components/Image';
+
 const drawer = createDrawerNavigator();
 const stack = createStackNavigator();
 

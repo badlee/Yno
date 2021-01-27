@@ -6,7 +6,9 @@ import { Constants } from "react-native-unimodules";
 
 function SearchBar(props) {
   return (
-    <View style={[styles.container, props.style]}>
+    <View style={[styles.container,{
+      backgroundColor: global.config.color1,
+    }, props.style]}>
       <View style={{
         paddingVertical: 10,
       }}></View>
@@ -47,7 +49,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.2,
     elevation: 3,
-    backgroundColor: "rgba(241,117,34,1)",
     height: 56 + Constants.statusBarHeight,
     width: "100%"
   },

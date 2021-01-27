@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Dimensions, Text, Image } from "react-native";
+import { StyleSheet, View, Dimensions, Text } from "react-native";
+import Image from './Image';
 import API from "../../API";
+
 const windowWidth = Dimensions.get('window').width;
-const width = Dimensions.get('window').width * 0.8;
+const width = Dimensions.get('window').width * 0.95;
 function Intro({style, item : {path,meta}}) {
   return (
     <View style={[styles.scrollArea, style, {backgroundColor:meta.pageColor}]}>
@@ -30,13 +32,13 @@ const styles = StyleSheet.create({
   scrollArea: {
     backgroundColor: "rgba(230, 230, 230,1)",
     flex: 1,
-    padding: "5%",
+    padding: 0,
     overflow:"hidden",
     paddingBottom: "10%",
     paddingTop: "10%"
   },
   scrollArea_contentContainerStyle: {
-    height: 810,
+    height: Dimensions.get('window').height,
     justifyContent: "center",
     alignItems: "center"
   },
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
     fontFamily: "roboto-regular",
     color: "#121212",
     textAlign: "center",
-    fontSize: 13,
+    fontSize: 15,
     // height: 200,
     width: width,
     margin: 15,

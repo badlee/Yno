@@ -11,17 +11,12 @@ import Register from "./src/screens/Register";
 import Slider from "./src/screens/Slider";
 import Login from "./src/screens/Login";
 import SplashScreen from "./src/screens/SplashScreen";
-import * as Font from "expo-font";
-import API from './API';
-import {replace, navigationRef } from './Navigation';
-const CONFIG = require("./config.json");
+import {navigationRef } from './Navigation';
 import {AppLoading} from 'expo';
 var Stack = createStackNavigator();
 import * as ScreenOrientation from 'expo-screen-orientation';
 var SPLASH = require("./src/assets/images/splash.png");
 global.colors = {
-  blue : "rgba(45,176,221,1)",
-  orange : "rgba(241,117,34,1)",
   SPLASH
 };
 
@@ -49,13 +44,6 @@ function ReelApp(props) {
 async function loadResourcesAsync() {
   await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   StatusBar.setBarStyle("light-content");
-  await Promise.all([
-    Font.loadAsync({
-      "roboto-regular": require("./src/assets/fonts/roboto-regular.ttf"),
-      "roboto-700": require("./src/assets/fonts/roboto-700.ttf")
-    })
-  ]);
-  await API.init(CONFIG);
 }
 
 function handleLoadingError(error) {
@@ -69,6 +57,7 @@ function handleFinishLoading(setLoadingComplete) {
 
 
 export default function App() {
+  console.disableYellowBox = true;
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   if (!isLoadingComplete) {
     return (

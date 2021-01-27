@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import MaterialCommunityIconsIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import Icon from "react-native-vector-icons/EvilIcons";
 import {navigate, pop } from '../../Navigation';
 import Constants from 'expo-constants';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import tinycolor from 'tinycolor2';
+import Image from './Image';
 
 function TopBar(props) {
   return (
-    <View style={[styles.container, props.style]}>
+    <View style={[styles.container,{backgroundColor: global.config.color1,}, props.style]}>
       <TouchableOpacity
             onPress={()=>{
               pop();
@@ -20,7 +20,9 @@ function TopBar(props) {
               style={styles.leftIcon}
             ></MaterialCommunityIconsIcon>
           </TouchableOpacity>
-          {!!props.noLogo == false && <View style={[styles.imageContainer, props.logoStyle]}>
+          {!!props.noLogo == false && <View style={[styles.imageContainer,{
+            borderColor: tinycolor(global.config.color2).toRgbString(),
+          }, props.logoStyle]}>
             <Image
               source={props.logo || require("../assets/images/icon2.png")}
               resizeMode="contain"
@@ -57,7 +59,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.2,
     elevation: 3,
-    backgroundColor: "rgba(241,117,34,1)",
     height: 56 + Constants.statusBarHeight,
     width: "100%",
     flexDirection: "row",
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
   imageContainer : {
     width: 40,
     height: 40,
-    backgroundColor: "rgba(255,255,255,0.4)",
+    backgroundColor: "rgba(255,255,255,1)",
     borderRadius: 10,
     borderColor: "transparent",
     borderWidth: 1,

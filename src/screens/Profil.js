@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import TopBar from "../components/TopBar";
 import Modal from "../components/Modal";
 import {Context} from "../context/LocationContext";
-
 import {
   StyleSheet,
   View,
@@ -10,7 +9,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  AsyncStorage
 } from "react-native";
 import TextInputRect from "../components/TextInputRect";
 import ValidationComponent from 'react-native-form-validator';
@@ -137,7 +135,7 @@ export default class MyForm extends ValidationComponent {
             <Gravatar email={this.state.email} size={400} defaultImage="mm" />
           }
         </View>
-        <Text style={styles.userGmailCom}>{this.state.email}</Text>
+        <Text style={styles.userGmailCom}>{this.state.type_user=="facebook" ? this.state.displayName : this.state.email}</Text>
         <TouchableOpacity style={styles.button} style={styles.button1} onPress={()=>this.setState({showChangePwd: true})}>
           <Text style={styles.modifier}>Modifier Mot de passe</Text>
         </TouchableOpacity>
@@ -216,7 +214,7 @@ export default class MyForm extends ValidationComponent {
             } : {}
           ]} onPress={()=>{
             if(this.state.oldpwd != this.state.password)
-              return alert("Erreur","Les mots de passe ne correspondent pas.",{type:"warn"});
+              return alert("Erreur","Les mots de passe ne correspondent pas.",{type:"error"});
             this._onSubmit({
               password : {required : true}
             },{

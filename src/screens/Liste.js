@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, ScrollView, Image } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SearchItem from "../components/SearchItem";
@@ -10,6 +10,7 @@ import Schedule from '../components/Schedule';
 import TopBar from "../components/TopBar";
 import {moment} from "../context/LocationContext";
 import API from "../../API";
+import Image from '../components/Image';
 
 function Liste(props) {
   var $p = props.route.params;

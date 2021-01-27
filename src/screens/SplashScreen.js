@@ -1,28 +1,32 @@
 import React, { Component,useState } from "react";
-import { AsyncStorage, StyleSheet, View, Text, Image , TouchableOpacity, StatusBar, Alert} from "react-native";
+import { AsyncStorage, StyleSheet, View, Text , TouchableOpacity, StatusBar, Alert} from "react-native";
 import API from "../../API";
 import {Context, moment} from "../context/LocationContext";
 import { AppLoading } from "expo";
 import {replace } from '../../Navigation';
-import { Circle } from 'react-native-animated-spinkit'
+import { Circle } from 'react-native-animated-spinkit';
+import Image from '../components/Image';
+
+const CONFIG = require("../../config.json");
 
 function SplashScreen() {
-  const { alert,userToken} = React.useContext(Context);
+  const { alert,userToken,setFavoris} = React.useContext(Context);
   const [error, setError] = React.useState(false);
+  const [loadColor, setLoadColor] = React.useState("#ddd");
   const bootstrapAsync = async () => {
     try{
-      setError(false);
+      setError(false);// reset error when reload
       let intro = "";
-      try {
-        intro = await AsyncStorage.getItem('intro') ?? "";
-      } catch (e) {}
-
+      await API.init(CONFIG);
+      // get Global variables
       var res = await API.categorie_reservation({limit : -1 });
       global.categorie_reservation = res;
       var res = await API.categorie({limit : -1 });
       global.categories = res;
       res = await API.configuration();
       global.config = res;
+      setLoadColor(global.config.color1);
+      // console.log("global.config", global.config.color1,global.config.color2);
       res = await API.publicite({
         filter : {
           "expired": {"$gte":moment().format("YYYY-MM-DD")},
@@ -63,6 +67,26 @@ function SplashScreen() {
         fields : ["lien","description","client"]
       });
       global.publicitesText = res;
+      if(userToken){
+        var fav = await API.favoris.find({
+          filter:{
+            "user._id" : userToken._id
+          },
+          fields : ["client"], 
+          populate :  false
+        });
+        setFavoris(fav.map(el=>el.client._id));
+      }
+      // end global
+      try {
+          // await AsyncStorage.removeItem('intro');
+          console.log("1 Splash ==> ");
+          intro = await AsyncStorage.getItem('intro') ?? "";
+          console.log("2 Splash ==> ");
+      } catch (e) {
+        console.log("ERROR", e);
+      }
+      console.log("userToken ==> ",userToken, intro);
       if(userToken)
         replace("Recherche");
       else
@@ -81,10 +105,9 @@ function SplashScreen() {
     }
   };
   React.useEffect(() => {
-    // StatusBar.setBarStyle("light-content");
+      // StatusBar.setBarStyle("light-content");
     StatusBar.setBarStyle("dark-content");
-    // Fetch the token from storage then navigate to our appropriate place
-    
+    // Fetch the token from storage then navigate to our appropriate place    
     bootstrapAsync();
   }, []);
   return (
@@ -99,7 +122,7 @@ function SplashScreen() {
           justifyContent: "center",
           alignItems : "center"
         }}>
-          <Circle color="rgba(241,117,34,1)" size={50}></Circle>
+          <Circle color={loadColor} size={50}></Circle>
           <Text style={styles.chargement}>Chargement...</Text>
         </View>
         }
@@ -132,7 +155,6 @@ const styles = StyleSheet.create({
     fontFamily: "roboto-regular",
     fontSize : 11,
     color: "#444",
-    // backgroundColor: "rgba(241,117,34,0.2)",
     paddingVertical: 2,
     paddingHorizontal: 7,
     marginTop : 15,

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Image, Text, Keyboard, Dimensions, StatusBar, AsyncStorage, Linking, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Text, Keyboard, Dimensions, StatusBar, AsyncStorage, Linking, ScrollView, TouchableOpacity, Alert } from "react-native";
 import SearchInput from "../components/SearchInput";
 import BottomMenu from "../components/BottomMenu";
 import {Context,moment} from "../context/LocationContext";
@@ -7,6 +7,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import API from "../../API";
 import { Constants } from "react-native-unimodules";
 import {navigate } from '../../Navigation';
+import tinycolor from 'tinycolor2';
+import Image from '../components/Image';
 
 var pubHeight = (Dimensions.get("window").width - 40) / 2;
 
@@ -14,9 +16,14 @@ function Recherche(props) {
   const [_bgIsSet, setBackground] = React.useState(false);
   const { history,myLocationPlace,spinner, alert, userToken } = React.useContext(Context);
   const [bottomMenu,showBottomMenu] = React.useState(true);
+  const [myLocationPlaceColor,setMyLocationPlaceColor] = React.useState("#FFFFFF");
   var pub;
   React.useEffect(()=>{
       StatusBar.setBarStyle("light-content");
+      var c = tinycolor(global.config.color1).lighten(10);
+      while(c.isDark())
+        c = c.lighten(10);
+      setMyLocationPlaceColor(c.toRgbString());
   },[])
   try{
     if(!_bgIsSet && global?.config)
@@ -61,7 +68,7 @@ function Recherche(props) {
         alignSelf:"flex-start",
         paddingHorizontal : 30,
         marginTop : 10 + Constants.statusBarHeight ,
-        color : "white",
+        color : tinycolor(global.config.color2).lighten(40).setAlpha(1).toRgbString(),
         // fontWeight : 700,
         fontFamily : 'roboto-700',
         fontSize : 30
@@ -80,7 +87,7 @@ function Recherche(props) {
               position: "relative",
               top : -30,
               flex: 0,
-              color: "rgba(241,117,34,1)",
+              color: myLocationPlaceColor,
               textShadowColor: 'rgba(0, 0, 0, 0.8)',
               textShadowOffset: {width: 0, height: 0},
               textShadowRadius: 10,
@@ -104,7 +111,7 @@ function Recherche(props) {
           height : 20,
           overflow : "hidden",
           position : "absolute",
-          backgroundColor : "rgba(241,117,34,1)",
+          backgroundColor : global.config.color1,
           color: "white",
           left: -(pubHeight / 2) + 15,
           top : pubHeight / 2 - 10,
@@ -112,7 +119,7 @@ function Recherche(props) {
           textAlign : "center",
           justifyContent:"center",
           fontFamily: "roboto-regular",
-          borderRadius: 20,
+          borderRadius: 10,
           fontSize : 12,
         }}>Mon Historique</Text>,
         <View key="history-separator" style={{
@@ -165,21 +172,29 @@ function Recherche(props) {
                     alignSelf: "stretch"
                 }}
               ></Image>
-              <Image
-                source={!!(item?.logo?.path) ? {uri:API.getAssetUri(item.logo.path)} : require("../assets/images/icon2.png")}
-                resizeMode="cover"
-                style={{
+              <View style={{
                     width: (pubHeight - 50)/1.5,
                     height: (pubHeight - 50)/1.5,
                     alignSelf: "stretch",
                     position : "absolute",
                     left : (pubHeight / 2) - ((pubHeight - 50)/1.5)/2,
                     top : ((pubHeight - 50)/1.5)/4,
-                    backgroundColor : "rgba(255,255,255,0.4)",
+                    backgroundColor : "rgba(255,255,255,0.7)",
+                    borderColor: tinycolor(global.config.color2).setAlpha(0.5).toRgbString(),
+                    borderWidth : 2,
                     borderRadius : 15,
-                    padding: 15,
-              }}
-              ></Image>
+                    padding: 10,
+                    overflow: "hidden"
+                  }}>
+                <Image
+                  source={!!(item?.logo?.path) ? {uri:API.getAssetUri(item.logo.path)} : require("../assets/images/icon2.png")}
+                  resizeMode="contain"
+                  style={{
+                    width: (pubHeight - 50)/1.5 - 20,
+                    height: (pubHeight - 50)/1.5 - 20,
+                  }}
+                ></Image>
+              </View>
               <View style={{
                 position : "absolute",
                 bottom : 0,
@@ -214,6 +229,8 @@ function Recherche(props) {
             alignSelf:"center",
             marginRight: 20,
             borderRadius: 10,
+            borderColor : tinycolor(global.config.color2).setAlpha(0.3).toRgbString(),
+            borderWidth : 4,
             padding : 0,
             overflow: "hidden"
           }} onPress={()=>{
@@ -273,8 +290,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)"
   },
   image1: {
-    width: 128,
-    height: 128,
+    width: Dimensions.get("window").width / 2.8125,
+    height: Dimensions.get("window").width / 2.8125,
     margin: 5,
   },
   searchInput: {
@@ -302,27 +319,6 @@ const styles = StyleSheet.create({
     height: 20,
     flex: 1
   },
-  // spacer: {
-  //   flex: 1,
-  //   backgroundColor: "rgba(221, 221, 221,1)"
-  // },
-  button: {
-    height: 200,
-    borderRadius: 20,
-    alignItems: "center",
-    overflow: "hidden",
-    borderWidth: 1,
-    alignSelf: "stretch",
-    margin: 15,
-    borderColor: "rgba(241,117,34,1)"
-  },
-  rect11: {
-    backgroundColor: "rgba(241,117,34,1)",
-    alignSelf: "stretch",
-    height: 32,
-    alignItems: "center",
-    justifyContent: "center"
-  },
   text: {
     fontFamily: "roboto-700",
     color: "rgba(255,255,255,1)",
@@ -334,23 +330,6 @@ const styles = StyleSheet.create({
   mapView: {
     flex: 1,
     alignSelf: "stretch"
-  },
-  button2: {
-    height: 100,
-    borderRadius: 16,
-    alignItems: "center",
-    overflow: "hidden",
-    borderWidth: 1,
-    alignSelf: "stretch",
-    margin: 15,
-    borderColor: "rgba(241,117,34,1)"
-  },
-  rect10: {
-    backgroundColor: "rgba(241,117,34,1)",
-    alignSelf: "stretch",
-    height: 20,
-    alignItems: "center",
-    justifyContent: "center"
   },
   publicite: {
     fontFamily: "roboto-700",
