@@ -1,7 +1,7 @@
 {
-  "server": "http://yno.moyi-tech.com",
+  "server": "http://ynomobile.com",
   "baseUrl": "/ApiRest",
-  "token": "52433dd60f6557d878e3af1fdc1a4b",
+  "token": "95456750b5cc6b36711efc1c255c42",
   "filter": {
     "$or": [
       {"delete": false},

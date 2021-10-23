@@ -51,7 +51,7 @@ function Recherche(props) {
   return (
     <View style={styles.container} onPress={()=>{console.log(global)}}>
       <Image style={[styles.bgPage]} 
-        source={{uri:_bgIsSet || "https://picsum.photos/id/160/3200/2119.jpg"}}
+        source={{uri: _bgIsSet || "https://picsum.photos/id/160/3200/2119.jpg"}}
         resizeMode="cover"
       />
       {_bgIsSet  && <View style={[styles.bgPage]} />}

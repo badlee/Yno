@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import LocationContext from "./src/context/LocationContext";
@@ -65,7 +65,9 @@ export default function App() {
         startAsync={loadResourcesAsync}
         onError={handleLoadingError}
         onFinish={() => handleFinishLoading(setLoadingComplete)}
-      ></AppLoading>
+      >
+        <Text>Chargement ...</Text>
+      </AppLoading>
     );
   } else {
     return  <ReelApp />;
