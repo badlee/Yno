@@ -6,12 +6,13 @@ import {
   ScrollView,
   Image,
   Text,
-  AsyncStorage,
   TouchableOpacity,
   StatusBar,
   BackHandler,
   Dimensions
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import TextInputRect from "../components/TextInputRect";
 import ValidationComponent from 'react-native-form-validator';
 import API from "../../API";
@@ -208,7 +209,6 @@ export default class MyForm extends ValidationComponent {
         password: this.state.password.trim().toLowerCase(),
       }).then(async (value)=>{
         if(value){
-          console.log(value);
           await setUserToken({
             ...value,
             _id: value._id.trim().toLowerCase(),

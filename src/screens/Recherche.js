@@ -9,7 +9,7 @@ import { Constants } from "react-native-unimodules";
 import {navigate } from '../../Navigation';
 import tinycolor from 'tinycolor2';
 import Image from '../components/Image';
-
+const _BG = require("../assets/images/bg.jpg");
 var pubHeight = (Dimensions.get("window").width - 40) / 2;
 
 function Recherche(props) {
@@ -51,7 +51,7 @@ function Recherche(props) {
   return (
     <View style={styles.container} onPress={()=>{console.log(global)}}>
       <Image style={[styles.bgPage]} 
-        source={{uri: _bgIsSet || "https://picsum.photos/id/160/3200/2119.jpg"}}
+        source={_bgIsSet ? {uri: _bgIsSet} : _BG}
         resizeMode="cover"
       />
       {_bgIsSet  && <View style={[styles.bgPage]} />}
@@ -66,12 +66,12 @@ function Recherche(props) {
       <Text key="user-title"  style={{
         textAlign :"left",
         alignSelf:"flex-start",
-        paddingHorizontal : 30,
-        marginTop : 10 + Constants.statusBarHeight ,
+        paddingHorizontal : 25,
+        marginTop : 0,// + Constants.statusBarHeight ,
         color : tinycolor(global.config.color2).lighten(40).setAlpha(1).toRgbString(),
         // fontWeight : 700,
         fontFamily : 'roboto-700',
-        fontSize : 30
+        fontSize : 25
       }}
       numberOfLines={1}
       >{ moment().greeting()} {(userToken.prenom || userToken.nom).split(/\s+/)[0]}{(userToken.prenom || userToken.nom).length < 3 && userToken.prenom && userToken.nom  ? (" "+ (userToken.nom).split(/\s+/)[0]) : ""}</Text>]}

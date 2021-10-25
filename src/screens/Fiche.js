@@ -22,7 +22,6 @@ import API from "../../API";
 import HTML from 'react-native-render-html';
 import { FloatingAction } from "react-native-floating-action";
 import * as Linking from 'expo-linking';
-import SvgUri from 'expo-svg-uri';
 import { Constants } from "react-native-unimodules";
 import {Context,displayMeter,getDistanceFromLatLonInKm, moment} from "../context/LocationContext";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -147,20 +146,12 @@ function Fiche(props) {
           </TouchableOpacity>
           <View style={[styles.categorie]}>
             <View style={{flex:1,flexDirection:"row",alignItems:"center"}}>
-              {!!(item?.categorie?.icon?.path) && /.svg$/.test(item.categorie.icon.path) ?
-                <SvgUri
-                  width={styles.iconCategorie.width}
-                  height={styles.iconCategorie.height}
-                  // fill={styles.infoText.color}
-                  source={{uri:API.getAssetUri(item.categorie.icon.path)}}
-                /> : 
-                <Image
-                  loadingIndicatorSource={<Circle />}
-                  source={ !!(item?.categorie?.icon?.path) ? {uri:API.getAssetUri(item.categorie.icon.path)} : require("../assets/images/icon.png")}
-                  resizeMode="contain"
-                  style={[styles.image,styles.iconCategorie]}
-                />
-              }
+              <Image
+                loadingIndicatorSource={<Circle />}
+                source={ !!(item?.categorie?.icon?.path) ? {uri:API.getAssetUri(item.categorie.icon.path)} : require("../assets/images/icon.png")}
+                resizeMode="contain"
+                style={[styles.image,styles.iconCategorie]}
+              />
               <View style={{height: 3, width: 3, padding:0, margin: 0}}></View>
               <Text style={styles.infoText}>
                 {item?.categorie?.nom ?? "Pas de categorie"}

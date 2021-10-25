@@ -192,7 +192,7 @@ var API = new Proxy({
   getAssetUri(asset){
     if(/^http(s)?:\/\//.test(asset))
       return asset;
-    return (CONFIG.server + "/" + asset).replace(/\/+/g,"/") 
+    return (CONFIG.server + ((CONFIG?.baseUrl ? CONFIG.baseUrl : "") + "/" + asset.replace(new RegExp(`^${CONFIG.baseUrl}`), ""))).replace(/\/+/g,"/").replace(/^(http(s)?:\/)/, "$1/");
   },
   template(tmpl, data){
     return templateEngine(tmpl,{...(typeof data == "object" && !Array.isArray(data)  ? data : {}), "@" : data});

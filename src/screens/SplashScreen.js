@@ -1,8 +1,10 @@
 import React, { Component,useState } from "react";
-import { AsyncStorage, StyleSheet, View, Text , TouchableOpacity, StatusBar, Alert} from "react-native";
+import { StyleSheet, View, Text , TouchableOpacity, StatusBar, Alert} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import API from "../../API";
 import {Context, moment} from "../context/LocationContext";
-import { AppLoading } from "expo";
+import AppLoading from 'expo-app-loading';
 import {replace } from '../../Navigation';
 import { Circle } from 'react-native-animated-spinkit';
 import Image from '../components/Image';
@@ -46,6 +48,7 @@ function SplashScreen() {
         limit : 50,
         fields : ["lien","image2x1"]
       });
+      console.log("PUB",res);
       global.publicites = res;
       res = await API.publicite({
         filter : {

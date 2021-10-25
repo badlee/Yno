@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import {AsyncStorage, StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIconsIcon from "react-native-vector-icons/MaterialIcons";
 import { BlurView } from 'expo-blur';
 import {navigate} from '../../Navigation';

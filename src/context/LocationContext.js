@@ -1,13 +1,12 @@
 import * as React from 'react';
-import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
-import { Alert, Dimensions,StatusBar, AsyncStorage } from 'react-native';
+import { Alert, Dimensions,StatusBar } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import moment from "moment";
 import API from '../../API';
 import * as Font from "expo-font";
 import Image from '../components/Image';
-
 
 const WINDOW = Dimensions.get('window');
 moment.locale('fr', {
@@ -91,7 +90,7 @@ moment.fn.greeting = function () {
 	return g;
 }
 var favorisRequestCache = {};
-const Context = React.createContext();
+const Context = React.createContext({});
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
   lat1 = parseFloat(lat1);
@@ -135,7 +134,7 @@ export {
   moment
 };
 
-export default (props) => {
+const LocationContext = (props) => {
   const [spinner, showSpinner] = React.useState(false);
   const [myLocationStatus, setMyLocationStatus] = React.useState(null);
   const [myLocation, setMyLocation] = React.useState(null);
@@ -178,26 +177,20 @@ export default (props) => {
   } 
   const _init = async (type) => {
     // await AsyncStorage.clear(); // reset
-    await Promise.all([
-      Font.loadAsync({
-        "roboto-regular": require("../assets/fonts/roboto-regular.ttf"),
-        "roboto-700": require("../assets/fonts/roboto-700.ttf")
-      })
-    ]);
-    _getLocation();
     var res = await AsyncStorage.getItem("userToken");
-    if(res){
-      var user = JSON.parse(res);
-      setUserToken(user);
-    }
+    res = res ? JSON.parse(res) : null;
+    setUserToken(res);
     var history =  await AsyncStorage.getItem("history")
     history = history ? JSON.parse(history) : [];
     setHistory(history);
-    setInit(true);
+    await  _getLocation;
+    await Font.loadAsync({
+      "roboto-regular": require("../assets/fonts/roboto-regular.ttf"),
+      "roboto-700": require("../assets/fonts/roboto-700.ttf")
+    });
     forceUpdate();
     setTimeout(()=>{
-      Permissions.askAsync(Permissions.LOCATION).then(async ({ granted,status })=>{
-        console.log(granted,status );
+      Location.requestForegroundPermissionsAsync().then(async ({ granted,status })=>{
         setMyLocationStatus(status);
         if(granted){
           var ret = await Location.getCurrentPositionAsync();
@@ -206,12 +199,15 @@ export default (props) => {
           setIsGpsLocation(true);
         }else{
         }
+        setInit(true);
+      },(e)=>{
+        console.error(e);
+        setInit(true);
       });
-    },5000);
-
+    },2500);
   };
   React.useEffect(() => {
-      _init(); 
+      setTimeout(_init, 500);
   }, []);
   return ( init ?
       <Context.Provider value={{
@@ -330,12 +326,14 @@ export default (props) => {
         {props.children}
         <Toast ref={(ref) => {Toast.setRef(ref); setAlertRef(ref);}} />
       </Context.Provider> : <Image
-              source={global.colors.SPLASH}
-              resizeMode="cover"
-              style={{
-                width: "100%",
-                height: "100%",
-              }}
-            />
+        source={global.colors.SPLASH}
+        resizeMode="cover"
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />
   );
-};;
+};
+
+export default LocationContext;

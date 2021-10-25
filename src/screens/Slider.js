@@ -1,5 +1,7 @@
 import React from 'react';
-import {AsyncStorage, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Intro from "../components/Intro";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { replace } from '../../Navigation';
@@ -98,7 +100,7 @@ export default class App extends React.Component {
 
   }
   _renderItem ({ item }){
-    return <Intro item={item} style={styles.intro}></Intro>;
+    return <Intro key={"slide"+Math.random().toString(16).split(".")[1]} item={item} style={styles.intro}></Intro>;
   }
   async _onDone () {
     await AsyncStorage.setItem('intro',"1");
@@ -106,10 +108,10 @@ export default class App extends React.Component {
   }
   _renderNextButton(){
     return (
-      <View style={[styles.buttonCircle,{backgroundColor: this._getColor(this.item.meta.pageColor)}]}>
+      <View key="slide-next" style={[styles.buttonCircle,{backgroundColor: this._getColor(this.item.meta.pageColor)}]}>
         <Icon
-          name="md-arrow-round-forward"
-          color={this.item.meta.textColor}
+          name="md-chevron-forward-sharp"
+          color={this.item.meta.textColor || "#FFFFFF"}
           size={24}
         />
       </View>
@@ -117,10 +119,10 @@ export default class App extends React.Component {
   };
   _renderDoneButton(){
     return (
-      <View style={[styles.buttonCircle,{backgroundColor: this._getColor(this.item.meta.pageColor)}]}>
+      <View  key="slide-done" style={[styles.buttonCircle,{backgroundColor: this._getColor(this.item.meta.pageColor)}]}>
         <Icon
           name="md-checkmark"
-          color={this.item.meta.textColor}
+          color={this.item.meta.textColor || "#FFFFFF"}
           size={24}
         />
       </View>
@@ -134,6 +136,7 @@ export default class App extends React.Component {
     var dotColor = this._getColor(this.item.meta.pageColor);
     var dotActiveColor = this._getColor(this.item.meta.textColor);
     var borderWidth = 0;
+    console.log(global.config.slides);
     return <AppIntroSlider
       // nextLabel="Suivant" 
       // doneLabel="S'identifier" 

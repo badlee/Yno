@@ -1,7 +1,10 @@
+// In App.js in a new project
+
 import * as React from 'react';
-import { StatusBar, Text } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { View, Text, StatusBar, LogBox } from 'react-native';
+
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import LocationContext from "./src/context/LocationContext";
 import Fiche from "./src/screens/Fiche";
 import Liste from "./src/screens/Liste";
@@ -12,15 +15,29 @@ import Slider from "./src/screens/Slider";
 import Login from "./src/screens/Login";
 import SplashScreen from "./src/screens/SplashScreen";
 import {navigationRef } from './Navigation';
-import {AppLoading} from 'expo';
-var Stack = createStackNavigator();
+import AppLoading from 'expo-app-loading';
 import * as ScreenOrientation from 'expo-screen-orientation';
 var SPLASH = require("./src/assets/images/splash.png");
 global.colors = {
   SPLASH
 };
 
-
+const LoadingApp = function(){
+  // console.disableYellowBox = true;
+  // LogBox.ignoreAllLogs(true);
+  LogBox.install();
+   
+  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+  if (isLoadingComplete) {
+    return <ReelApp/>;
+  } else {
+    return  <AppLoading
+      startAsync={loadResourcesAsync}
+      onError={handleLoadingError}
+      onFinish={() => handleFinishLoading(setLoadingComplete)}
+    ></AppLoading>;
+  }
+}
 
 function ReelApp(props) {
   return (
@@ -54,22 +71,31 @@ function handleFinishLoading(setLoadingComplete) {
   setLoadingComplete(true);
 }
 
-
-
-export default function App() {
-  console.disableYellowBox = true;
-  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-  if (!isLoadingComplete) {
-    return (
-      <AppLoading
-        startAsync={loadResourcesAsync}
-        onError={handleLoadingError}
-        onFinish={() => handleFinishLoading(setLoadingComplete)}
-      >
-        <Text>Chargement ...</Text>
-      </AppLoading>
-    );
-  } else {
-    return  <ReelApp />;
-  }
+function HomeScreen() {
+  return (
+    <View style={{ backgroundColor: 'red', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{color: "#FF0000"}}>Home Screen</Text>
+    </View>
+  );
 }
+function DetailsScreen() {
+  return (
+    <View style={{ backgroundColor: 'red', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+     </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default LoadingApp;

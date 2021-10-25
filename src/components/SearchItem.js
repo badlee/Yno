@@ -3,7 +3,6 @@ import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import API from "../../API";
 import { Circle } from 'react-native-animated-spinkit'
-import SvgUri from 'expo-svg-uri';
 import {Context,displayMeter,getDistanceFromLatLonInKm} from "../context/LocationContext";
 import {navigate } from '../../Navigation';
 import Image from "../components/Image";
@@ -40,20 +39,13 @@ function SearchItem(props) {
           }}>
             <View style={{
               paddingTop: 2
-            }}>
-              { !!(item?.categorie?.icon?.path) && /.svg$/.test(item.categorie.icon.path) ?
-                <SvgUri
-                  width={styles.iconCategorie.width}
-                  height={styles.iconCategorie.height}
-                  source={{uri:API.getAssetUri(item.categorie.icon.path)}}
-                /> : 
-                <Image
-                  loadingIndicatorSource={<Circle />}
-                  source={ !!(item?.categorie?.icon?.path) ? {uri:API.getAssetUri(item.categorie.icon.path)} : require("../assets/images/icon.png")}
-                  resizeMode="contain"
-                  style={[styles.image,styles.iconCategorie]}
-                />
-              }
+            }}>  
+            <Image
+              loadingIndicatorSource={<Circle />}
+              source={ !!(item?.categorie?.icon?.path) ? {uri:API.getAssetUri(item.categorie.icon.path)} : require("../assets/images/icon.png")}
+              resizeMode="contain"
+              style={[styles.image,styles.iconCategorie]}
+            />
             </View>
             <View style={{height: 3, width: 3, padding:0, margin: 0}}></View>
             <Text style={styles.categorie}>

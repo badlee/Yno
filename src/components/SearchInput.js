@@ -4,7 +4,6 @@ import Icon from "react-native-vector-icons/EvilIcons";
 import {Context} from "../context/LocationContext";
 import API from "../../API";
 import {navigate } from '../../Navigation';
-import SvgUri from 'expo-svg-uri';
 import { Circle } from 'react-native-animated-spinkit';
 import Image from './Image';
 
@@ -118,20 +117,12 @@ function SearchInput(props) {
             }}
             onPress={()=>_search(setQuery,alert,showSpinner,"", categorie, true)}
             >
-              {/.svg$/.test(categorie.icon.path) ?
-                <SvgUri
-                  width={styles.iconCategorie.width}
-                  height={styles.iconCategorie.height}
-                  // fill={styles.infoText.color}
-                  source={{uri:API.getAssetUri(categorie.icon.path)}}
-                /> : 
-                <Image
-                  loadingIndicatorSource={<Circle />}
-                  source={{uri:API.getAssetUri(categorie.icon.path)}}
-                  resizeMode="contain"
-                  style={[styles.image,styles.iconCategorie]}
-                />
-              }
+              <Image
+                loadingIndicatorSource={<Circle />}
+                source={{uri:API.getAssetUri(categorie.icon.path)}}
+                resizeMode="contain"
+                style={[styles.image,styles.iconCategorie]}
+              />
               <View style={{height: 3, width: 3, padding:0, margin: 0}}></View>
               <Text style={[styles.infoText,{
                 textAlign: "center",

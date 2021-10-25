@@ -8,9 +8,10 @@ import {
   Alert,
   TouchableOpacity,
   StatusBar,
-  AsyncStorage,
   Dimensions
 } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import TextInputRect from "../components/TextInputRect";
 import ValidationComponent from 'react-native-form-validator';
 import API from "../../API";
@@ -37,13 +38,10 @@ export default class MyForm extends ValidationComponent {
     this.navigation = props.navigation;
   }
   async _recherche(){
-
     this.navigation.replace("Recherche");
-    // replace("Recherche");
   }
  
   async _login(value){
-    console.log("API.users.findOne",value);
     const { showSpinner,alert , setUserToken} = this.context;
     if(value){
       await setUserToken({
@@ -55,6 +53,7 @@ export default class MyForm extends ValidationComponent {
         phone: value.phone.trim().toLowerCase(),
         photo : value.photo ?? "",
       });
+      
       this._recherche();
       showSpinner(false);
     }else {
